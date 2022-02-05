@@ -1,4 +1,4 @@
-package com.freejobs.jobListingService;
+package com.freeejobs.jobListingService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

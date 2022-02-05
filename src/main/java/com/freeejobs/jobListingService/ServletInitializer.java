@@ -1,4 +1,4 @@
-package com.freejobs.jobListingService;
+package com.freeejobs.jobListingService;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
