@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.freeejobs.jobListing.model.JobListing;
@@ -24,6 +25,14 @@ public class JobListingService {
 
 	public List<JobListing> listJobListingByAuthorId(long authorId) {
 		return jobListingRepository.findByAuthorId(authorId);
+	}
+
+	public List<JobListing> listAllOpenActiveJobListing(String status, String searchValue, Integer page, Integer numberOfListingPerPage) {
+		return jobListingRepository.listAllOpenActiveJobListing(status, searchValue, PageRequest.of(page,numberOfListingPerPage));
+	}
+
+	public Integer getAllOpenActiveJobListingTotal(String status, String searchValue) {
+		return jobListingRepository.getAllOpenActiveJobListingTotal(status, searchValue);
 	}
 
 }

@@ -25,6 +25,8 @@ public class JobListingController {
 	@Autowired
 	private JobListingService jobListingService;
 	
+	private Integer numberOfListingPerPage = 10;
+	
 	@RequestMapping(value="/getJobListing", method= RequestMethod.GET)
 	public JobListing getJobListingById(HttpServletResponse response,
 			@RequestParam long listingId) throws URISyntaxException {
@@ -75,5 +77,58 @@ public class JobListingController {
 		}
 		return jobListings;
 	}
+	
+	@RequestMapping(value="/listAllOpenActiveJobListing", method= RequestMethod.GET)
+	public List<JobListing> listAllOpenActiveJobListing(HttpServletResponse response, 
+			@RequestParam long pageNumber, @RequestParam String searchValue) throws URISyntaxException {
+		
+		List<JobListing> jobListings = null;
+		
+		try {
+			String status = "Pending";
+			jobListings = jobListingService.listAllOpenActiveJobListing(status, searchValue, ((int)pageNumber-1), numberOfListingPerPage);
+				if(jobListings == null) {
+					System.out.println("null");
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					return null;
+				} else {
+					response.setStatus(HttpServletResponse.SC_OK);
+				}
+			
+				
+			
+		} catch (Exception e) {
+			System.out.println(e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return null;
+		}
+		return jobListings;
+	}
+	@RequestMapping(value="/getAllOpenActiveJobListingTotal", method= RequestMethod.GET)
+	public Integer getAllOpenActiveJobListingTotal(HttpServletResponse response, @RequestParam String searchValue) throws URISyntaxException {
+		
+		Integer jobListingsTotal = null;
+		
+		try {
+			String status = "Pending";
+			jobListingsTotal = jobListingService.getAllOpenActiveJobListingTotal(status, searchValue);
+				if(jobListingsTotal == null) {
+					System.out.println("null");
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					return null;
+				} else {
+					response.setStatus(HttpServletResponse.SC_OK);
+				}
+			
+				
+			
+		} catch (Exception e) {
+			System.out.println(e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return null;
+		}
+		return jobListingsTotal;
+	}
+	
 
 }
