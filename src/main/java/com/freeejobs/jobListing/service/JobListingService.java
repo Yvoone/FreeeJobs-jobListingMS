@@ -53,4 +53,12 @@ public class JobListingService {
 		
 	}
 
+	public JobListing updateJobListingStatus(long id, String status) {
+		JobListing oldJobListing = jobListingRepository.findById(id);
+		oldJobListing.setDateUpdated(new Date());
+		oldJobListing.setStatus(status);
+		return jobListingRepository.save(oldJobListing);
+		
+	}
+
 }

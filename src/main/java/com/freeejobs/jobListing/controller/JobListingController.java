@@ -89,7 +89,7 @@ public class JobListingController {
 		List<JobListing> jobListings = null;
 		
 		try {
-			String status = "Pending";
+			String status = "OFA";
 			jobListings = jobListingService.listAllOpenActiveJobListing(status, searchValue, ((int)pageNumber-1), numberOfListingPerPage);
 				if(jobListings == null) {
 					System.out.println("null");
@@ -135,15 +135,23 @@ public class JobListingController {
 	}
 	
 	@PostMapping("/create")
-    public void createProduct(HttpServletResponse response, @RequestBody JobListing jobListing) {
+    public void createJobListing(HttpServletResponse response, @RequestBody JobListing jobListing) {
 		//validate fields
 		//handle errors
 		jobListingService.addJobListing(jobListing);
     }
 
     @PutMapping("/{id}/edit")
-    public void updateProduct(@PathVariable("id") Long id, @RequestBody JobListing jobListing) {
+    public void updateJobListing(@PathVariable("id") Long id, @RequestBody JobListing jobListing) {
     	jobListingService.updateJobListing(jobListing);
+    }
+    
+    @PutMapping("/{id}/updateJobListingStatus")
+    public void updateJobListingStatus(@PathVariable("id") Long id, @RequestBody String status) {
+    	System.out.println(id);
+    	System.out.println(status);
+    	jobListingService.updateJobListingStatus(id,status);
+		
     }
 	
 
