@@ -39,7 +39,7 @@ public class JobListingService {
 	public JobListing addJobListing(JobListing jobListing) {
 		jobListing.setDateCreated(new Date());
 		jobListing.setDateUpdated(new Date());
-		jobListing.setStatus("Pending");
+		jobListing.setStatus("OFA");
 		return jobListingRepository.save(jobListing);
 		
 	}
