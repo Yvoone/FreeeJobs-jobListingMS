@@ -61,4 +61,14 @@ public class JobListingService {
 		
 	}
 
+	public List<JobListing> listJobListingByAuthorIdAndStatus(long authorId, String status) {
+		System.out.println("status:"+status);
+		if (status.isEmpty()) {
+			return jobListingRepository.findByAuthorId(authorId);
+		}else {
+			return jobListingRepository.findAllJobListingByAuthorIdAndStatus(authorId, status);
+		}
+		
+	}
+
 }

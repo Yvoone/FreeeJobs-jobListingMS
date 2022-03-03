@@ -22,5 +22,8 @@ public interface JobListingRepository extends JpaRepository<JobListing, Long> {
 	public List<JobListing> listAllOpenActiveJobListing(String status, String searchValue, Pageable pageable);
 	@Query("select COUNT(t) from JobListing t where t.status = ?1 and lower(t.title) like concat('%', lower(?2), '%')")
 	public Integer getAllOpenActiveJobListingTotal(String status, String searchValue);
+	
+	
+	public List<JobListing> findAllJobListingByAuthorIdAndStatus(long authorId, String status);
 
 }

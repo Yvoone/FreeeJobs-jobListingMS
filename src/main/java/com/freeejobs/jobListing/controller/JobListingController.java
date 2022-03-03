@@ -82,6 +82,33 @@ public class JobListingController {
 		return jobListings;
 	}
 	
+	@RequestMapping(value="/listJobListingByAuthorIdAndStatus", method= RequestMethod.GET)
+	public List<JobListing> listJobListingByAuthorIdAndStatus(HttpServletResponse response,
+			@RequestParam long authorId, @RequestParam String status) throws URISyntaxException {
+		
+		List<JobListing> jobListings = null;
+		
+		try {
+			System.out.println(authorId);
+			jobListings = jobListingService.listJobListingByAuthorIdAndStatus(authorId, status);
+				if(jobListings == null) {
+					System.out.println("null");
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					return null;
+				} else {
+					response.setStatus(HttpServletResponse.SC_OK);
+				}
+			
+				
+			
+		} catch (Exception e) {
+			System.out.println(e);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return null;
+		}
+		return jobListings;
+	}
+	
 	@RequestMapping(value="/listAllOpenActiveJobListing", method= RequestMethod.GET)
 	public List<JobListing> listAllOpenActiveJobListing(HttpServletResponse response, 
 			@RequestParam long pageNumber, @RequestParam String searchValue) throws URISyntaxException {
