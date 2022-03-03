@@ -181,5 +181,28 @@ public class JobListingController {
 		
     }
 	
+    @RequestMapping(value="/getCompletedJobListing", method= RequestMethod.GET)
+	public JobListing getCompletedJobListingById(HttpServletResponse response,
+			@RequestParam long listingId) throws URISyntaxException {
+		
+		JobListing jobListing = null;
+		
+		try {
+			jobListing = jobListingService.getJobListingById(listingId);
+				if(jobListing == null) {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					return null;
+				} else {
+					if (!"C".equals(jobListing.getStatus())) {
+						jobListing = null;
+					}
+					response.setStatus(HttpServletResponse.SC_OK);
+				}
+		} catch (Exception e) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			return null;
+		}
+		return jobListing;
+	}
 
 }
