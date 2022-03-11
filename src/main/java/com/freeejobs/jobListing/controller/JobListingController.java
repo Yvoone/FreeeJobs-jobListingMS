@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.freeejobs.jobListing.model.JobListing;
+import com.freeejobs.jobListing.response.APIResponse;
+import com.freeejobs.jobListing.response.Status;
 import com.freeejobs.jobListing.service.JobListingService;
 
 @RestController
@@ -32,33 +34,38 @@ public class JobListingController {
 	private Integer numberOfListingPerPage = 10;
 	
 	@RequestMapping(value="/getJobListing", method= RequestMethod.GET)
-	public JobListing getJobListingById(HttpServletResponse response,
+	public APIResponse getJobListingById(HttpServletResponse response,
 			@RequestParam long listingId) throws URISyntaxException {
-		
+		APIResponse resp = new APIResponse();
+		Status status = new Status(Status.Type.OK, "Account login success.");
 		JobListing jobListing = null;
 		
 		try {
 			jobListing = jobListingService.getJobListingById(listingId);
 				if(jobListing == null) {
-					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					return null;
+					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to retrieve job listing.");
+					//return null;
 				} else {
-					response.setStatus(HttpServletResponse.SC_OK);
+					status = new Status(Status.Type.OK, "Successfully retrieve job listing.");
+					
 				}
-			
+				
 				
 			
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			return null;
+			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to retrieve job listing, Exception.");
+			//return null;
 		}
-		return jobListing;
+		resp.setData(jobListing);
+		resp.setStatus(status);
+		return resp;
 	}
 	
 	@RequestMapping(value="/listJobListingByAuthorId", method= RequestMethod.GET)
-	public List<JobListing> listJobListingByAuthorId(HttpServletResponse response,
+	public APIResponse listJobListingByAuthorId(HttpServletResponse response,
 			@RequestParam long authorId) throws URISyntaxException {
-		
+		APIResponse resp = new APIResponse();
+		Status status = new Status(Status.Type.OK, "Account login success.");
 		List<JobListing> jobListings = null;
 		
 		try {
@@ -66,143 +73,260 @@ public class JobListingController {
 			jobListings = jobListingService.listJobListingByAuthorId(authorId);
 				if(jobListings == null) {
 					System.out.println("null");
-					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					return null;
+					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					//return null;
+					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing By AuthorId.");
+					
 				} else {
-					response.setStatus(HttpServletResponse.SC_OK);
+					//response.setStatus(HttpServletResponse.SC_OK);
+					status = new Status(Status.Type.OK, "Successfully list JobListing By AuthorId.");
 				}
 			
 				
 			
 		} catch (Exception e) {
-			System.out.println(e);
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			return null;
+//			System.out.println(e);
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//			return null;
+			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing By AuthorId, Exception.");
 		}
-		return jobListings;
+		resp.setData(jobListings);
+		resp.setStatus(status);
+		return resp;
 	}
 	
 	@RequestMapping(value="/listJobListingByAuthorIdAndStatus", method= RequestMethod.GET)
-	public List<JobListing> listJobListingByAuthorIdAndStatus(HttpServletResponse response,
+	public APIResponse listJobListingByAuthorIdAndStatus(HttpServletResponse response,
 			@RequestParam long authorId, @RequestParam String status) throws URISyntaxException {
 		
 		List<JobListing> jobListings = null;
+		APIResponse resp = new APIResponse();
+		Status responseStatus = new Status(Status.Type.OK, "Account login success.");
 		
 		try {
 			System.out.println(authorId);
 			jobListings = jobListingService.listJobListingByAuthorIdAndStatus(authorId, status);
 				if(jobListings == null) {
-					System.out.println("null");
-					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					return null;
+					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					//return null;
+					responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing ByAuthorId And Status.");
+					
 				} else {
-					response.setStatus(HttpServletResponse.SC_OK);
+					//response.setStatus(HttpServletResponse.SC_OK);
+					responseStatus = new Status(Status.Type.OK, "Successfully list JobListing ByAuthorId And Status.");
 				}
 			
 				
 			
 		} catch (Exception e) {
 			System.out.println(e);
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			return null;
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//			return null;
+			responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing ByAuthorId And Status, Exception.");
 		}
-		return jobListings;
+		resp.setData(jobListings);
+		resp.setStatus(responseStatus);
+		return resp;
 	}
 	
 	@RequestMapping(value="/listAllOpenActiveJobListing", method= RequestMethod.GET)
-	public List<JobListing> listAllOpenActiveJobListing(HttpServletResponse response, 
+	public APIResponse listAllOpenActiveJobListing(HttpServletResponse response, 
 			@RequestParam long pageNumber, @RequestParam String searchValue) throws URISyntaxException {
 		
 		List<JobListing> jobListings = null;
+		APIResponse resp = new APIResponse();
+		Status status = new Status(Status.Type.OK, "Account login success.");
 		
 		try {
-			String status = "OFA";
-			jobListings = jobListingService.listAllOpenActiveJobListing(status, searchValue, ((int)pageNumber-1), numberOfListingPerPage);
+			String listingStatus = "OFA";
+			jobListings = jobListingService.listAllOpenActiveJobListing(listingStatus, searchValue, ((int)pageNumber-1), numberOfListingPerPage);
 				if(jobListings == null) {
-					System.out.println("null");
-					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					return null;
+					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					//return null;
+					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list All Open Active JobListing.");
+					
 				} else {
-					response.setStatus(HttpServletResponse.SC_OK);
+					//response.setStatus(HttpServletResponse.SC_OK);
+					status = new Status(Status.Type.OK, "Successfully list All Open Active JobListing.");
 				}
 			
 				
 			
 		} catch (Exception e) {
 			System.out.println(e);
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			return null;
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//			return null;
+			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list All Open Active JobListing, Exception.");
 		}
-		return jobListings;
+		resp.setData(jobListings);
+		resp.setStatus(status);
+		return resp;
 	}
 	@RequestMapping(value="/getAllOpenActiveJobListingTotal", method= RequestMethod.GET)
-	public Integer getAllOpenActiveJobListingTotal(HttpServletResponse response, @RequestParam String searchValue) throws URISyntaxException {
-		
+	public APIResponse getAllOpenActiveJobListingTotal(HttpServletResponse response, @RequestParam String searchValue) throws URISyntaxException {
 		Integer jobListingsTotal = null;
+		APIResponse resp = new APIResponse();
+		Status status = new Status(Status.Type.OK, "Account login success.");
 		
 		try {
-			String status = "Pending";
-			jobListingsTotal = jobListingService.getAllOpenActiveJobListingTotal(status, searchValue);
+			String listingStatus = "OFA";
+			jobListingsTotal = jobListingService.getAllOpenActiveJobListingTotal(listingStatus, searchValue);
 				if(jobListingsTotal == null) {
-					System.out.println("null");
-					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					return null;
+					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					//return null;
+					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get total of Open Active JobListing.");
+					
 				} else {
-					response.setStatus(HttpServletResponse.SC_OK);
+					//response.setStatus(HttpServletResponse.SC_OK);
+					status = new Status(Status.Type.OK, "Successfully get total of Open Active JobListing.");
 				}
 			
 				
 			
 		} catch (Exception e) {
 			System.out.println(e);
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			return null;
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//			return null;
+			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get total of Open Active JobListing, Exception.");
 		}
-		return jobListingsTotal;
+		resp.setData(jobListingsTotal);
+		resp.setStatus(status);
+		return resp;
+		
 	}
 	
 	@PostMapping("/create")
-    public void createJobListing(HttpServletResponse response, @RequestBody JobListing jobListing) {
+    public APIResponse createJobListing(HttpServletResponse response, @RequestBody JobListing jobListing) {
 		//validate fields
 		//handle errors
-		jobListingService.addJobListing(jobListing);
+		APIResponse resp = new APIResponse();
+		Status status = new Status(Status.Type.OK, "Account login success.");
+		JobListing jobListingCreated = null;
+		
+		try {
+			jobListingCreated = jobListingService.addJobListing(jobListing);
+				if(jobListingCreated == null) {
+					System.out.println("null");
+					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					//return null;
+					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to create job listing.");
+					
+				} else {
+					//response.setStatus(HttpServletResponse.SC_OK);
+					status = new Status(Status.Type.OK, "Successfully created job listing.");
+				}
+			
+				
+			
+		} catch (Exception e) {
+			System.out.println(e);
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//			return null;
+			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to create job listing, Exception.");
+		}
+		resp.setData(jobListingCreated);
+		resp.setStatus(status);
+		return resp;
+//		jobListingService.addJobListing(jobListing);
+//		return null;
     }
 
     @PutMapping("/{id}/edit")
-    public void updateJobListing(@PathVariable("id") Long id, @RequestBody JobListing jobListing) {
-    	jobListingService.updateJobListing(jobListing);
+    public APIResponse updateJobListing(@PathVariable("id") Long id, @RequestBody JobListing jobListing) {
+    	JobListing jobListingUpdated = null;
+    	APIResponse resp = new APIResponse();
+		Status status = new Status(Status.Type.OK, "Account login success.");
+		
+		try {
+			jobListingUpdated = jobListingService.updateJobListing(jobListing);
+				if(jobListingUpdated == null) {
+					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					//return null;
+					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing.");
+					
+				} else {
+					//response.setStatus(HttpServletResponse.SC_OK);
+					status = new Status(Status.Type.OK, "Successfully get update JobListing.");
+				}
+			
+				
+			
+		} catch (Exception e) {
+			System.out.println(e);
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//			return null;
+			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing, Exception.");
+		}
+		resp.setData(jobListingUpdated);
+		resp.setStatus(status);
+		return resp;
     }
     
     @PutMapping("/{id}/updateJobListingStatus")
-    public void updateJobListingStatus(@PathVariable("id") Long id, @RequestBody String status) {
+    public APIResponse updateJobListingStatus(@PathVariable("id") Long id, @RequestBody String status) {
     	System.out.println(id);
     	System.out.println(status);
-    	jobListingService.updateJobListingStatus(id,status);
+    	JobListing jobListingUpdated = null;
+    	APIResponse resp = new APIResponse();
+		Status responseStatus = new Status(Status.Type.OK, "Account login success.");
+		
+		try {
+			jobListingUpdated = jobListingService.updateJobListingStatus(id,status);
+				if(jobListingUpdated == null) {
+					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					//return null;
+					responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing status.");
+					
+				} else {
+					//response.setStatus(HttpServletResponse.SC_OK);
+					responseStatus = new Status(Status.Type.OK, "Successfully get update JobListing status.");
+				}
+			
+				
+			
+		} catch (Exception e) {
+			System.out.println(e);
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//			return null;
+			responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing status, Exception.");
+		}
+		resp.setData(jobListingUpdated);
+		resp.setStatus(responseStatus);
+		return resp;
 		
     }
 	
     @RequestMapping(value="/getCompletedJobListing", method= RequestMethod.GET)
-	public JobListing getCompletedJobListingById(HttpServletResponse response,
+	public APIResponse getCompletedJobListingById(HttpServletResponse response,
 			@RequestParam long listingId) throws URISyntaxException {
 		
 		JobListing jobListing = null;
+		APIResponse resp = new APIResponse();
+		Status responseStatus = new Status(Status.Type.OK, "Account login success.");
 		
 		try {
 			jobListing = jobListingService.getJobListingById(listingId);
 				if(jobListing == null) {
-					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					return null;
+					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					//return null;
+					responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get Completed JobListing By Id.");
+					
 				} else {
-					if (!"C".equals(jobListing.getStatus())) {
-						jobListing = null;
-					}
-					response.setStatus(HttpServletResponse.SC_OK);
+					//response.setStatus(HttpServletResponse.SC_OK);
+					responseStatus = new Status(Status.Type.OK, "Successfully get Completed JobListing By Id.");
 				}
+			
+				
+			
 		} catch (Exception e) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			return null;
+			System.out.println(e);
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//			return null;
+			responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get Completed JobListing By Id, Exception.");
 		}
-		return jobListing;
+		resp.setData(jobListing);
+		resp.setStatus(responseStatus);
+		return resp;
 	}
 
 }
