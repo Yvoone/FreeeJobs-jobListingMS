@@ -72,5 +72,8 @@ public class JobListingService {
 		}
 		
 	}
+	public boolean isId(String id) {
+		return String.valueOf(id).matches("[0-9]+");
+	}
 
 }

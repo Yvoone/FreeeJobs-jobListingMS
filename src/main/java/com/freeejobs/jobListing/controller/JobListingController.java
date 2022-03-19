@@ -51,7 +51,11 @@ public class JobListingController {
 		JobListing jobListing = null;
 		
 		try {
-			jobListing = jobListingService.getJobListingById(listingId);
+			if(!jobListingService.isId(String.valueOf(listingId))){
+				status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to retrieve job listing. Invalid listing Id.");
+				LOGGER.error(status.toString());
+			}else {
+				jobListing = jobListingService.getJobListingById(listingId);
 				if(jobListing == null) {
 					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to retrieve job listing.");
 					LOGGER.error(status.toString());
@@ -60,6 +64,8 @@ public class JobListingController {
 					status = new Status(Status.Type.OK, "Successfully retrieve job listing.");
 					
 				}
+			}
+			
 				
 				
 			
@@ -81,21 +87,24 @@ public class JobListingController {
 		List<JobListing> jobListings = null;
 		
 		try {
-			System.out.println(authorId);
-			jobListings = jobListingService.listJobListingByAuthorId(authorId);
-				if(jobListings == null) {
-					System.out.println("null");
-					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					//return null;
-					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing By AuthorId.");
-					LOGGER.error(status.toString());
-					
-				} else {
-					//response.setStatus(HttpServletResponse.SC_OK);
-					status = new Status(Status.Type.OK, "Successfully list JobListing By AuthorId.");
-				}
-			
-				
+			if(!jobListingService.isId(String.valueOf(authorId))){
+				status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing By AuthorId. Invalid author Id.");
+				LOGGER.error(status.toString());
+			}else {
+				System.out.println(authorId);
+				jobListings = jobListingService.listJobListingByAuthorId(authorId);
+					if(jobListings == null) {
+						System.out.println("null");
+						//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+						//return null;
+						status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing By AuthorId.");
+						LOGGER.error(status.toString());
+						
+					} else {
+						//response.setStatus(HttpServletResponse.SC_OK);
+						status = new Status(Status.Type.OK, "Successfully list JobListing By AuthorId.");
+					}
+			}				
 			
 		} catch (Exception e) {
 //			System.out.println(e);
@@ -116,24 +125,36 @@ public class JobListingController {
 		List<JobListing> jobListings = null;
 		APIResponse resp = new APIResponse();
 		Status responseStatus = new Status(Status.Type.OK, "Account login success.");
+		List<String> errors = new ArrayList<String>();
 		
 		try {
-			System.out.println(authorId);
-			jobListings = jobListingService.listJobListingByAuthorIdAndStatus(authorId, status);
-				if(jobListings == null) {
-					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					//return null;
-					responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing ByAuthorId And Status.");
-					LOGGER.error(status.toString());
-					
-				} else {
-					//response.setStatus(HttpServletResponse.SC_OK);
-					responseStatus = new Status(Status.Type.OK, "Successfully list JobListing ByAuthorId And Status.");
-				}
-			
-				
-			
-		} catch (Exception e) {
+			if(!StringUtils.isEmpty(status)&&!JobListingStatusEnum.Constants.JOB_LISTING_STATUS_LIST.contains(status)) {
+				errors.add("Invalid status value");
+			}
+			if(!jobListingService.isId(String.valueOf(authorId))){
+				errors.add("Invalid author id value");
+			}
+			if(errors.isEmpty()) {
+				System.out.println(authorId);
+				jobListings = jobListingService.listJobListingByAuthorIdAndStatus(authorId, status);
+					if(jobListings == null) {
+						//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+						//return null;
+						responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing ByAuthorId And Status.");
+						LOGGER.error(status.toString());
+						
+					} else {
+						//response.setStatus(HttpServletResponse.SC_OK);
+						responseStatus = new Status(Status.Type.OK, "Successfully list JobListing ByAuthorId And Status.");
+					}
+			}else {
+				responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing ByAuthorId And Status. Invalid status or id.");
+				String listOfErrors = errors.stream().map(Object::toString)
+                        .collect(Collectors.joining(", "));
+				LOGGER.error(status.toString()+" "+listOfErrors);
+			}
+		} 
+		catch (Exception e) {
 			System.out.println(e);
 //			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //			return null;
@@ -237,7 +258,7 @@ public class JobListingController {
 			if(StringUtils.isBlank(jobListing.getRateType())) {
 				errors.add("Invalid details value");
 			}
-			if(String.valueOf(jobListing.getAuthorId()).matches("[0-9]+")) {
+			if(!jobListingService.isId(String.valueOf(jobListing.getAuthorId()))) {
 				errors.add("Invalid author id value");
 			}
 			if(errors.isEmpty()) {
@@ -294,7 +315,7 @@ public class JobListingController {
 			if(StringUtils.isBlank(jobListing.getRateType())) {
 				errors.add("Invalid details value");
 			}
-			if(String.valueOf(jobListing.getAuthorId()).matches("[0-9]+")) {
+			if(!jobListingService.isId(String.valueOf(jobListing.getAuthorId()))) {
 				errors.add("Invalid author id value");
 			}
 			if(errors.isEmpty()) {
@@ -338,12 +359,16 @@ public class JobListingController {
     	JobListing jobListingUpdated = null;
     	APIResponse resp = new APIResponse();
 		Status responseStatus = new Status(Status.Type.OK, "Account login success.");
+		List<String> errors = new ArrayList<String>();
 		
 		try {
 			if(!JobListingStatusEnum.Constants.JOB_LISTING_STATUS_LIST.contains(status)) {
-				responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing status. Invalid status.");
-				LOGGER.error(status.toString());
-			}else {
+				errors.add("Invalid status value");
+			}
+			if(!jobListingService.isId(String.valueOf(id))){
+				errors.add("Invalid id value");
+			}
+			if(errors.isEmpty()) {
 				jobListingUpdated = jobListingService.updateJobListingStatus(id,status);
 				if(jobListingUpdated == null) {
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -355,7 +380,12 @@ public class JobListingController {
 					//response.setStatus(HttpServletResponse.SC_OK);
 					responseStatus = new Status(Status.Type.OK, "Successfully get update JobListing status.");
 				}
-			}	
+			}else {
+				responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to create job listing. Invalid JobListing Object.");
+				String listOfErrors = errors.stream().map(Object::toString)
+                        .collect(Collectors.joining(", "));
+				LOGGER.error(status.toString()+" "+listOfErrors);
+			}
 		} catch (Exception e) {
 			System.out.println(e);
 //			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -378,7 +408,11 @@ public class JobListingController {
 		Status responseStatus = new Status(Status.Type.OK, "Account login success.");
 		
 		try {
-			jobListing = jobListingService.getJobListingById(listingId);
+			if(!jobListingService.isId(String.valueOf(listingId))){
+				responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get Completed JobListing By Id. Invalid Id.");
+				LOGGER.error(responseStatus.toString());
+			}else {
+				jobListing = jobListingService.getJobListingById(listingId);
 				if(jobListing == null) {
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					//return null;
@@ -389,8 +423,7 @@ public class JobListingController {
 					//response.setStatus(HttpServletResponse.SC_OK);
 					responseStatus = new Status(Status.Type.OK, "Successfully get Completed JobListing By Id.");
 				}
-			
-				
+			}	
 			
 		} catch (Exception e) {
 			System.out.println(e);
