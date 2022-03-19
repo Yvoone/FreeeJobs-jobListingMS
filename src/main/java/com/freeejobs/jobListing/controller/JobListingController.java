@@ -24,12 +24,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.freeejobs.jobListing.constant.JobListingStatusEnum;
 import com.freeejobs.jobListing.model.JobListing;
 import com.freeejobs.jobListing.response.APIResponse;
 import com.freeejobs.jobListing.response.Status;
 import com.freeejobs.jobListing.service.JobListingService;
-
-import constant.JobListingStatusEnum;
 
 @RestController
 @RequestMapping(value="/jobListing")

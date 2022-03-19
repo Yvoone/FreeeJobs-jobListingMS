@@ -1,4 +1,4 @@
-package constant;
+package com.freeejobs.jobListing.constant;
 
 import java.util.Arrays;
 import java.util.Collections;

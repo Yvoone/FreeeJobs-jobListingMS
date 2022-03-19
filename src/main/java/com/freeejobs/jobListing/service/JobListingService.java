@@ -9,10 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.freeejobs.jobListing.constant.JobListingStatusEnum;
 import com.freeejobs.jobListing.model.JobListing;
 import com.freeejobs.jobListing.repository.JobListingRepository;
-
-import constant.JobListingStatusEnum;
 
 @Service
 public class JobListingService {

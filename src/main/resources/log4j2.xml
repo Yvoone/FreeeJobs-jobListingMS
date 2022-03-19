@@ -4,7 +4,7 @@
         <Property name="basePath">./src/main/resources/logs</Property>
     </Properties>
     <Appenders>
-    	<RollingFile name="logfile" filename="${basePath}/freeejobs.log" append="true"
+    	<RollingFile name="logfile" filename="${basePath}/freeejobs_joblisting.log" append="true"
             filepattern="%d{YYYYMMddHHmmss}-freeejobs.log">
             <PatternLayout pattern="%d{YYYY-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />
             <Policies>
@@ -12,7 +12,7 @@
             </Policies>
             <DefaultRolloverStrategy max="20" />
         </RollingFile>
-        <RollingFile name="errorlogfile" filename="${basePath}/freeejobs_error.log" append="true"
+        <RollingFile name="errorlogfile" filename="${basePath}/freeejobs_joblisting_error.log" append="true"
             filepattern="%d{YYYYMMddHHmmss}-freeejobs.log">
             <PatternLayout pattern="%d{YYYY-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />
             <Policies>
@@ -20,7 +20,7 @@
             </Policies>
             <DefaultRolloverStrategy max="20" />
         </RollingFile>
-        <RollingFile name="JpaLogFile" filename="${basePath}/freeejobs_jpa.log" append="true"
+        <RollingFile name="JpaLogFile" filename="${basePath}/freeejobs_joblisting_jpa.log" append="true"
             filepattern="%d{YYYYMMddHHmmss}-freeejobs.log">
             <PatternLayout pattern="%d{YYYY-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%L - %msg%n" />
             <Policies>
