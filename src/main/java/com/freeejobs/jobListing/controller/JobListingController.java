@@ -2,10 +2,16 @@ package com.freeejobs.jobListing.controller;
 
 import java.io.Console;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,10 +29,14 @@ import com.freeejobs.jobListing.response.APIResponse;
 import com.freeejobs.jobListing.response.Status;
 import com.freeejobs.jobListing.service.JobListingService;
 
+import constant.JobListingStatusEnum;
+
 @RestController
 @RequestMapping(value="/jobListing")
 @CrossOrigin
 public class JobListingController {
+	
+	private static Logger LOGGER = LogManager.getLogger(JobListingController.class);
 	
 	@Autowired
 	private JobListingService jobListingService;
@@ -44,6 +54,7 @@ public class JobListingController {
 			jobListing = jobListingService.getJobListingById(listingId);
 				if(jobListing == null) {
 					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to retrieve job listing.");
+					LOGGER.error(status.toString());
 					//return null;
 				} else {
 					status = new Status(Status.Type.OK, "Successfully retrieve job listing.");
@@ -54,6 +65,7 @@ public class JobListingController {
 			
 		} catch (Exception e) {
 			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to retrieve job listing, Exception.");
+			LOGGER.error(e.getMessage(), e);
 			//return null;
 		}
 		resp.setData(jobListing);
@@ -76,6 +88,7 @@ public class JobListingController {
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					//return null;
 					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing By AuthorId.");
+					LOGGER.error(status.toString());
 					
 				} else {
 					//response.setStatus(HttpServletResponse.SC_OK);
@@ -89,6 +102,7 @@ public class JobListingController {
 //			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //			return null;
 			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing By AuthorId, Exception.");
+			LOGGER.error(e.getMessage(), e);
 		}
 		resp.setData(jobListings);
 		resp.setStatus(status);
@@ -110,6 +124,7 @@ public class JobListingController {
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					//return null;
 					responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing ByAuthorId And Status.");
+					LOGGER.error(status.toString());
 					
 				} else {
 					//response.setStatus(HttpServletResponse.SC_OK);
@@ -123,6 +138,7 @@ public class JobListingController {
 //			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //			return null;
 			responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing ByAuthorId And Status, Exception.");
+			LOGGER.error(e.getMessage(), e);
 		}
 		resp.setData(jobListings);
 		resp.setStatus(responseStatus);
@@ -138,12 +154,13 @@ public class JobListingController {
 		Status status = new Status(Status.Type.OK, "Account login success.");
 		
 		try {
-			String listingStatus = "OFA";
+			String listingStatus = JobListingStatusEnum.OPEN_FOR_APPLICATION.getCode();
 			jobListings = jobListingService.listAllOpenActiveJobListing(listingStatus, searchValue, ((int)pageNumber-1), numberOfListingPerPage);
 				if(jobListings == null) {
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					//return null;
 					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list All Open Active JobListing.");
+					LOGGER.error(status.toString());
 					
 				} else {
 					//response.setStatus(HttpServletResponse.SC_OK);
@@ -157,6 +174,7 @@ public class JobListingController {
 //			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //			return null;
 			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list All Open Active JobListing, Exception.");
+			LOGGER.error(e.getMessage(), e);
 		}
 		resp.setData(jobListings);
 		resp.setStatus(status);
@@ -169,12 +187,13 @@ public class JobListingController {
 		Status status = new Status(Status.Type.OK, "Account login success.");
 		
 		try {
-			String listingStatus = "OFA";
+			String listingStatus = JobListingStatusEnum.OPEN_FOR_APPLICATION.getCode();
 			jobListingsTotal = jobListingService.getAllOpenActiveJobListingTotal(listingStatus, searchValue);
 				if(jobListingsTotal == null) {
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					//return null;
 					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get total of Open Active JobListing.");
+					LOGGER.error(status.toString());
 					
 				} else {
 					//response.setStatus(HttpServletResponse.SC_OK);
@@ -188,6 +207,7 @@ public class JobListingController {
 //			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //			return null;
 			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get total of Open Active JobListing, Exception.");
+			LOGGER.error(e.getMessage(), e);
 		}
 		resp.setData(jobListingsTotal);
 		resp.setStatus(status);
@@ -202,27 +222,50 @@ public class JobListingController {
 		APIResponse resp = new APIResponse();
 		Status status = new Status(Status.Type.OK, "Account login success.");
 		JobListing jobListingCreated = null;
+		List<String> errors = new ArrayList<String>();
 		
 		try {
-			jobListingCreated = jobListingService.addJobListing(jobListing);
+			if(StringUtils.isBlank(jobListing.getTitle())) {
+				errors.add("Invalid title value");
+			}
+			if(StringUtils.isBlank(jobListing.getDetails())) {
+				errors.add("Invalid details value");
+			}
+			if(StringUtils.isBlank(jobListing.getRate())) {
+				errors.add("Invalid details value");
+			}
+			if(StringUtils.isBlank(jobListing.getRateType())) {
+				errors.add("Invalid details value");
+			}
+			if(String.valueOf(jobListing.getAuthorId()).matches("[0-9]+")) {
+				errors.add("Invalid author id value");
+			}
+			if(errors.isEmpty()) {
+				jobListingCreated = jobListingService.addJobListing(jobListing);
 				if(jobListingCreated == null) {
 					System.out.println("null");
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					//return null;
 					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to create job listing.");
+					LOGGER.error(status.toString());
 					
 				} else {
 					//response.setStatus(HttpServletResponse.SC_OK);
 					status = new Status(Status.Type.OK, "Successfully created job listing.");
 				}
-			
-				
+			}else {
+				status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to create job listing. Invalid JobListing Object.");
+				String listOfErrors = errors.stream().map(Object::toString)
+                        .collect(Collectors.joining(", "));
+				LOGGER.error(status.toString()+" "+listOfErrors);
+			}
 			
 		} catch (Exception e) {
 			System.out.println(e);
 //			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //			return null;
 			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to create job listing, Exception.");
+			LOGGER.error(e.getMessage(), e);
 		}
 		resp.setData(jobListingCreated);
 		resp.setStatus(status);
@@ -236,18 +279,43 @@ public class JobListingController {
     	JobListing jobListingUpdated = null;
     	APIResponse resp = new APIResponse();
 		Status status = new Status(Status.Type.OK, "Account login success.");
+		List<String> errors = new ArrayList<String>();
 		
 		try {
-			jobListingUpdated = jobListingService.updateJobListing(jobListing);
+			if(StringUtils.isBlank(jobListing.getTitle())) {
+				errors.add("Invalid title value");
+			}
+			if(StringUtils.isBlank(jobListing.getDetails())) {
+				errors.add("Invalid details value");
+			}
+			if(StringUtils.isBlank(jobListing.getRate())) {
+				errors.add("Invalid details value");
+			}
+			if(StringUtils.isBlank(jobListing.getRateType())) {
+				errors.add("Invalid details value");
+			}
+			if(String.valueOf(jobListing.getAuthorId()).matches("[0-9]+")) {
+				errors.add("Invalid author id value");
+			}
+			if(errors.isEmpty()) {
+				jobListingUpdated = jobListingService.updateJobListing(jobListing);
 				if(jobListingUpdated == null) {
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					//return null;
 					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing.");
+					LOGGER.error(status.toString());
 					
 				} else {
 					//response.setStatus(HttpServletResponse.SC_OK);
 					status = new Status(Status.Type.OK, "Successfully get update JobListing.");
 				}
+			}else {
+				status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to create job listing. Invalid JobListing Object.");
+				String listOfErrors = errors.stream().map(Object::toString)
+                        .collect(Collectors.joining(", "));
+				LOGGER.error(status.toString()+" "+listOfErrors);
+			}
+			
 			
 				
 			
@@ -256,6 +324,7 @@ public class JobListingController {
 //			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //			return null;
 			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing, Exception.");
+			LOGGER.error(e.getMessage(), e);
 		}
 		resp.setData(jobListingUpdated);
 		resp.setStatus(status);
@@ -271,24 +340,28 @@ public class JobListingController {
 		Status responseStatus = new Status(Status.Type.OK, "Account login success.");
 		
 		try {
-			jobListingUpdated = jobListingService.updateJobListingStatus(id,status);
+			if(!JobListingStatusEnum.Constants.JOB_LISTING_STATUS_LIST.contains(status)) {
+				responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing status. Invalid status.");
+				LOGGER.error(status.toString());
+			}else {
+				jobListingUpdated = jobListingService.updateJobListingStatus(id,status);
 				if(jobListingUpdated == null) {
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					//return null;
 					responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing status.");
+					LOGGER.error(status.toString());
 					
 				} else {
 					//response.setStatus(HttpServletResponse.SC_OK);
 					responseStatus = new Status(Status.Type.OK, "Successfully get update JobListing status.");
 				}
-			
-				
-			
+			}	
 		} catch (Exception e) {
 			System.out.println(e);
 //			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //			return null;
 			responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing status, Exception.");
+			LOGGER.error(e.getMessage(), e);
 		}
 		resp.setData(jobListingUpdated);
 		resp.setStatus(responseStatus);
@@ -310,6 +383,7 @@ public class JobListingController {
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					//return null;
 					responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get Completed JobListing By Id.");
+					LOGGER.error(responseStatus.toString());
 					
 				} else {
 					//response.setStatus(HttpServletResponse.SC_OK);
@@ -323,6 +397,7 @@ public class JobListingController {
 //			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 //			return null;
 			responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get Completed JobListing By Id, Exception.");
+			LOGGER.error(e.getMessage(), e);
 		}
 		resp.setData(jobListing);
 		resp.setStatus(responseStatus);

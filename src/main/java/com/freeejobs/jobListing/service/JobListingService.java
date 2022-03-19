@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.freeejobs.jobListing.model.JobListing;
 import com.freeejobs.jobListing.repository.JobListingRepository;
 
+import constant.JobListingStatusEnum;
+
 @Service
 public class JobListingService {
 	
@@ -39,7 +41,7 @@ public class JobListingService {
 	public JobListing addJobListing(JobListing jobListing) {
 		jobListing.setDateCreated(new Date());
 		jobListing.setDateUpdated(new Date());
-		jobListing.setStatus("OFA");
+		jobListing.setStatus(JobListingStatusEnum.OPEN_FOR_APPLICATION.getCode());
 		return jobListingRepository.save(jobListing);
 		
 	}
