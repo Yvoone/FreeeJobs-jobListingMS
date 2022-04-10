@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.freeejobs.jobListing.constant.AuditEnum;
 import com.freeejobs.jobListing.constant.JobListingStatusEnum;
 import com.freeejobs.jobListing.model.JobListing;
+import com.freeejobs.jobListing.model.JobListingAudit;
+import com.freeejobs.jobListing.repository.JobListingAuditRepository;
 import com.freeejobs.jobListing.repository.JobListingRepository;
 
 @Service
@@ -20,6 +23,9 @@ public class JobListingService {
 	
 	@Autowired
 	private JobListingRepository jobListingRepository;
+	
+	@Autowired
+	private JobListingAuditRepository jobListingAuditRepository;
 	
 	public JobListing getJobListingById(long jobId) {
 		return jobListingRepository.findById(jobId);
@@ -41,7 +47,11 @@ public class JobListingService {
 		jobListing.setDateCreated(new Date());
 		jobListing.setDateUpdated(new Date());
 		jobListing.setStatus(JobListingStatusEnum.OPEN_FOR_APPLICATION.getCode());
-		return jobListingRepository.save(jobListing);
+		
+		JobListing addedListing = jobListingRepository.save(jobListing);
+		insertAudit(addedListing, AuditEnum.INSERT.getCode());
+		
+		return addedListing;
 		
 	}
 
@@ -50,7 +60,11 @@ public class JobListingService {
 		jobListing.setDateCreated(oldJobListing.getDateCreated());
 		jobListing.setDateUpdated(new Date());
 		jobListing.setStatus(oldJobListing.getStatus());
-		return jobListingRepository.save(jobListing);
+		insertAudit(jobListing ,AuditEnum.UPDATE.getCode());
+		JobListing updatedListing = jobListingRepository.save(jobListing);
+		insertAudit(updatedListing, AuditEnum.UPDATE.getCode());
+		
+		return updatedListing;
 		
 	}
 
@@ -58,7 +72,10 @@ public class JobListingService {
 		JobListing oldJobListing = jobListingRepository.findById(id);
 		oldJobListing.setDateUpdated(new Date());
 		oldJobListing.setStatus(status);
-		return jobListingRepository.save(oldJobListing);
+		JobListing updatedListing = jobListingRepository.save(oldJobListing);
+		insertAudit(updatedListing, AuditEnum.UPDATE.getCode());
+		
+		return updatedListing;
 		
 	}
 
@@ -74,5 +91,41 @@ public class JobListingService {
 	public boolean isId(String id) {
 		return String.valueOf(id).matches("[0-9]+");
 	}
+
+	public JobListingAudit insertAudit(JobListing jobListing, String opsType) {
+		JobListingAudit newAuditEntry = new JobListingAudit();
+		newAuditEntry.setAuditData(jobListing.toString());
+		newAuditEntry.setOpsType(opsType);
+		newAuditEntry.setDateCreated(new Date());
+		newAuditEntry.setCreatedBy(String.valueOf(jobListing.getAuthorId()));
+		
+		return jobListingAuditRepository.save(newAuditEntry);
+	}
+	
+//	public String jobListingToString(JobListing listing) {
+//		String listingString = "";
+//		if(listing.getTitle()!=null)
+//		{
+//			listingString.concat("title: "+listing.getTitle()+" | ");
+//		}
+//		if(listing.getDetails()!=null) {
+//			listingString.concat("details: "+listing.getDetails()+" | ");
+//		}
+//		if(listing.getDetails()!=null) {
+//			listingString.concat("author: "+listing.getAuthorId()+" | ");
+//		}
+//		if(listing.getDetails()!=null) {
+//			listingString.concat("rate: "+listing.getRate()+" | ");
+//		}
+//		if(listing.getDetails()!=null) {
+//			listingString.concat("rateType: "+listing.getRateType()+" | ");
+//		}
+//		if(listing.getDetails()!=null) {
+//			listingString.concat("status: "+listing.getStatus());
+//		}
+//		return listingString;
+//		
+//		
+//	}
 
 }

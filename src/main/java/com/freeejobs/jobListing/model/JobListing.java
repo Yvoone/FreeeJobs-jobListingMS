@@ -122,4 +122,11 @@ public class JobListing {
 		this.dateUpdated = dateUpdated;
 	}
 
+	@Override
+	public String toString() {
+		return "JobListing [authorId=" + authorId + ", title=" + title + ", details=" + details + ", rate=" + rate
+				+ ", rateType=" + rateType + ", status=" + status + ", dateCreated=" + dateCreated + ", dateUpdated="
+				+ dateUpdated + "]";
+	}
+
 }
