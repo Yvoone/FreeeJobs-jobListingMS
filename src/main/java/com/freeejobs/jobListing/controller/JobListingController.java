@@ -127,7 +127,7 @@ public class JobListingController {
 		List<String> errors = new ArrayList<String>();
 		
 		try {
-			if(!StringUtils.isEmpty(status)&&!JobListingStatusEnum.Constants.JOB_LISTING_STATUS_LIST.contains(status)) {
+			if(jobListingService.isStatusInvalid(status)) {
 				errors.add("Invalid status value");
 			}
 			if(!jobListingService.isId(String.valueOf(authorId))){
@@ -245,16 +245,16 @@ public class JobListingController {
 		List<String> errors = new ArrayList<String>();
 		
 		try {
-			if(StringUtils.isBlank(jobListing.getTitle())) {
+			if(jobListingService.isBlank(jobListing.getTitle())) {
 				errors.add("Invalid title value");
 			}
-			if(StringUtils.isBlank(jobListing.getDetails())) {
+			if(jobListingService.isBlank(jobListing.getDetails())) {
 				errors.add("Invalid details value");
 			}
-			if(StringUtils.isBlank(jobListing.getRate())) {
+			if(jobListingService.isBlank(jobListing.getRate())) {
 				errors.add("Invalid details value");
 			}
-			if(StringUtils.isBlank(jobListing.getRateType())) {
+			if(jobListingService.isBlank(jobListing.getRateType())) {
 				errors.add("Invalid details value");
 			}
 			if(!jobListingService.isId(String.valueOf(jobListing.getAuthorId()))) {
@@ -302,16 +302,16 @@ public class JobListingController {
 		List<String> errors = new ArrayList<String>();
 		
 		try {
-			if(StringUtils.isBlank(jobListing.getTitle())) {
+			if(jobListingService.isBlank(jobListing.getTitle())) {
 				errors.add("Invalid title value");
 			}
-			if(StringUtils.isBlank(jobListing.getDetails())) {
+			if(jobListingService.isBlank(jobListing.getDetails())) {
 				errors.add("Invalid details value");
 			}
-			if(StringUtils.isBlank(jobListing.getRate())) {
+			if(jobListingService.isBlank(jobListing.getRate())) {
 				errors.add("Invalid details value");
 			}
-			if(StringUtils.isBlank(jobListing.getRateType())) {
+			if(jobListingService.isBlank(jobListing.getRateType())) {
 				errors.add("Invalid details value");
 			}
 			if(!jobListingService.isId(String.valueOf(jobListing.getAuthorId()))) {
@@ -361,7 +361,7 @@ public class JobListingController {
 		List<String> errors = new ArrayList<String>();
 		
 		try {
-			if(!JobListingStatusEnum.Constants.JOB_LISTING_STATUS_LIST.contains(status)) {
+			if(jobListingService.isStatusInvalid(status)) {
 				errors.add("Invalid status value");
 			}
 			if(!jobListingService.isId(String.valueOf(id))){

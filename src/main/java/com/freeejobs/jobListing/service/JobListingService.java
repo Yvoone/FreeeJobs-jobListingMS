@@ -3,6 +3,7 @@ package com.freeejobs.jobListing.service;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,14 @@ public class JobListingService {
 	}
 	public boolean isId(String id) {
 		return String.valueOf(id).matches("[0-9]+");
+	}
+	
+	public boolean isStatusInvalid(String status) {
+		return !StringUtils.isEmpty(status)&&!JobListingStatusEnum.Constants.JOB_LISTING_STATUS_LIST.contains(status);
+	}
+	
+	public boolean isBlank(String value) {
+		return StringUtils.isBlank(value);
 	}
 
 	public JobListingAudit insertAudit(JobListing jobListing, String opsType) {
