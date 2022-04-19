@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.freeejobs.jobListing.constant.JobListingStatusEnum;
 import com.freeejobs.jobListing.model.JobListing;
+import com.freeejobs.jobListing.model.JobListingAudit;
 import com.freeejobs.jobListing.response.Status;
 
 public class JobListingFixture {
@@ -88,4 +89,18 @@ public class JobListingFixture {
 //		Status status = new Status(Status.Type.OK, "Successful.");
 //		return status;
 //	}
+	
+	public static JobListingAudit createJobListingAudit() {
+
+		JobListingAudit jobListingAudit = new JobListingAudit();
+		jobListingAudit.setAuditData("Audit");
+		jobListingAudit.setCreatedBy("SYSTEM");
+		jobListingAudit.setDateCreated(new Date());
+		jobListingAudit.setId(1);
+        
+
+        return jobListingAudit;
+    }
+	
+	
 }

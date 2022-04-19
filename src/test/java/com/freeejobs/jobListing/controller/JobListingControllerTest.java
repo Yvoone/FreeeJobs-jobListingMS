@@ -24,6 +24,7 @@ import com.freeejobs.jobListing.WebConfig;
 import com.freeejobs.jobListing.constant.JobListingStatusEnum;
 import com.freeejobs.jobListing.model.JobListing;
 import com.freeejobs.jobListing.response.APIResponse;
+import com.freeejobs.jobListing.response.Status;
 import com.freeejobs.jobListing.service.JobListingService;
 
 import java.net.URISyntaxException;
@@ -336,6 +337,11 @@ public class JobListingControllerTest {
 		
 		@Test
 	    void testCreateJobListing() {
+			Status stat = new Status();
+			stat.setStatusCode(Status.Type.OK.getCode());
+			stat.setMessage("Successfully created job listing.");
+			stat.setStatusText(Status.Type.OK.getText());
+			
 			HttpServletResponse response = mock(HttpServletResponse.class);
 			when(jobListingService.isBlank(jobListing.getTitle())).thenReturn(false);
 			when(jobListingService.isBlank(jobListing.getDetails())).thenReturn(false);
@@ -345,8 +351,12 @@ public class JobListingControllerTest {
 	        when(jobListingService.addJobListing(jobListing)).thenReturn(jobListing);
 	        APIResponse res = jobListingController.createJobListing(response, jobListing);
 	        JobListing resListings = (JobListing) res.getData();
+	        Status resStatus = res.getStatus();
 	        verify(jobListingService, Mockito.times(1)).addJobListing(jobListing);
 
+	        assertEquals(resStatus.getStatusCode(), resStatus.getStatusCode());
+	        assertEquals(resStatus.getStatusText(), resStatus.getStatusText());
+	        assertEquals(resStatus.getMessage(), resStatus.getMessage());
 	        assertEquals(jobListing.getId(), resListings.getId());
 	    }
 		@Test
