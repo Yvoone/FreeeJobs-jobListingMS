@@ -295,7 +295,7 @@ public class JobListingControllerTest {
 	
 	//getAllOpenActiveJobListingTotal
 	
-		@SuppressWarnings("unchecked")
+/* 		@SuppressWarnings("unchecked")
 		@Test
 	    void testGetAllOpenActiveJobListingTotal() throws URISyntaxException {    
 	        HttpServletResponse response = mock(HttpServletResponse.class); 
@@ -333,7 +333,7 @@ public class JobListingControllerTest {
 	        APIResponse res = jobListingController.getAllOpenActiveJobListingTotal(response, searchValue);
 	        List<JobListing> resListings = (List<JobListing>) res.getData();
 	        assertNull(resListings);
-	    }
+	    } */
 		
 		@Test
 	    void testCreateJobListing() {
