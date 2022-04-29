@@ -200,6 +200,42 @@ public class JobListingController {
 		resp.setStatus(status);
 		return resp;
 	}
+	
+	@RequestMapping(value="/getAllOpenActiveJobListingTotal", method= RequestMethod.GET)
+	public APIResponse getAllOpenActiveJobListingTotal(HttpServletResponse response) throws URISyntaxException {
+		Integer jobListingsTotal = null;
+		APIResponse resp = new APIResponse();
+		Status status = new Status(Status.Type.OK, "Account login success.");
+		
+		try {
+			String listingStatus = JobListingStatusEnum.OPEN_FOR_APPLICATION.getCode();
+			jobListingsTotal = jobListingService.getAllOpenActiveJobListingTotal(listingStatus, "");
+				if(jobListingsTotal == null) {
+					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					//return null;
+					status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get total of Open Active JobListing.");
+					LOGGER.error(status.toString());
+					
+				} else {
+					//response.setStatus(HttpServletResponse.SC_OK);
+					status = new Status(Status.Type.OK, "Successfully get total of Open Active JobListing.");
+				}
+			
+				
+			
+		} catch (Exception e) {
+			System.out.println(e);
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//			return null;
+			status = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to get total of Open Active JobListing, Exception.");
+			LOGGER.error(e.getMessage(), e);
+		}
+		resp.setData(jobListingsTotal);
+		resp.setStatus(status);
+		return resp;
+		
+	}
+	/* 
 	@RequestMapping(value="/getAllOpenActiveJobListingTotal", method= RequestMethod.GET)
 	public APIResponse getAllOpenActiveJobListingTotal(HttpServletResponse response, @RequestParam String searchValue) throws URISyntaxException {
 		Integer jobListingsTotal = null;
@@ -233,7 +269,7 @@ public class JobListingController {
 		resp.setStatus(status);
 		return resp;
 		
-	}
+	} */
 	
 	@PostMapping("/create")
     public APIResponse createJobListing(HttpServletResponse response, @RequestBody JobListing jobListing) {
