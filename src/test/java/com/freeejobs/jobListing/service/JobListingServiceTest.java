@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +42,7 @@ import com.freeejobs.jobListing.model.JobListingAudit;
 import com.freeejobs.jobListing.repository.JobListingAuditRepository;
 import com.freeejobs.jobListing.repository.JobListingRepository;
 import com.freeejobs.jobListing.response.APIResponse;
+import com.freeejobs.jobListing.response.Status;
 
 @WebAppConfiguration
 @ContextConfiguration(classes = WebConfig.class)
@@ -270,5 +272,29 @@ public class JobListingServiceTest {
         assertEquals(jobListingAuditLo.getOpsType(),AuditEnum.INSERT.getCode());
 
     }
+	
+	@Test
+    void testAuditEnum() {    
+
+		AuditEnum.INSERT.setCode("T");
+		AuditEnum.INSERT.setDescription("Test");
+
+        assertEquals(AuditEnum.INSERT.getDescription(), "Test");
+        assertEquals(AuditEnum.INSERT.getCode(), "T");
+
+    }
+	
+	@Test
+    void testJobApplicationStatusEnum() {    
+
+		JobListingStatusEnum.OPEN_FOR_APPLICATION.setCode("A");
+		JobListingStatusEnum.OPEN_FOR_APPLICATION.setDescription("Test");
+
+        assertEquals(JobListingStatusEnum.OPEN_FOR_APPLICATION.getDescription(), "Test");
+        assertEquals(JobListingStatusEnum.OPEN_FOR_APPLICATION.getCode(), "A");
+
+    }
+	
+	
 
 }
