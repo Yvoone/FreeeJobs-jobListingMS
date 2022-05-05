@@ -22,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.freeejobs.jobListing.WebConfig;
 import com.freeejobs.jobListing.constant.JobListingStatusEnum;
+import com.freeejobs.jobListing.dto.JobListingDTO;
 import com.freeejobs.jobListing.model.JobListing;
 import com.freeejobs.jobListing.response.APIResponse;
 import com.freeejobs.jobListing.response.Status;
@@ -60,6 +61,7 @@ public class JobListingControllerTest {
 
 	
 	private JobListing jobListing;
+	private JobListingDTO jobListingDTO;
 	private List<JobListing> jobListings;
 	private List<JobListing> jobListingsOpenStatus;
 	private int numberOfListingPerPage=10;
@@ -67,6 +69,7 @@ public class JobListingControllerTest {
 	@BeforeEach
     void setUp() {
         jobListing = JobListingFixture.createJobListing();
+        jobListingDTO = JobListingFixture.createJobListingDTO();
         jobListings = JobListingFixture.createJoblistingList();
         jobListingsOpenStatus = JobListingFixture.createOpenJoblistingList();
     }
@@ -343,16 +346,16 @@ public class JobListingControllerTest {
 			stat.setStatusText(Status.Type.OK.getText());
 			
 			HttpServletResponse response = mock(HttpServletResponse.class);
-			when(jobListingService.isBlank(jobListing.getTitle())).thenReturn(false);
-			when(jobListingService.isBlank(jobListing.getDetails())).thenReturn(false);
-			when(jobListingService.isBlank(jobListing.getRate())).thenReturn(false);
-			when(jobListingService.isBlank(jobListing.getRateType())).thenReturn(false);
-	        when(jobListingService.isId(String.valueOf(jobListing.getAuthorId()))).thenReturn(true);
-	        when(jobListingService.addJobListing(jobListing)).thenReturn(jobListing);
-	        APIResponse res = jobListingController.createJobListing(response, jobListing);
+			when(jobListingService.isBlank(jobListingDTO.getTitle())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getDetails())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getRate())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getRateType())).thenReturn(false);
+	        when(jobListingService.isId(String.valueOf(jobListingDTO.getAuthorId()))).thenReturn(true);
+	        when(jobListingService.addJobListing(jobListingDTO)).thenReturn(jobListing);
+	        APIResponse res = jobListingController.createJobListing(response, jobListingDTO);
 	        JobListing resListings = (JobListing) res.getData();
 	        Status resStatus = res.getStatus();
-	        verify(jobListingService, Mockito.times(1)).addJobListing(jobListing);
+	        verify(jobListingService, Mockito.times(1)).addJobListing(jobListingDTO);
 
 	        assertEquals(resStatus.getStatusCode(), resStatus.getStatusCode());
 	        assertEquals(resStatus.getStatusText(), resStatus.getStatusText());
@@ -362,15 +365,15 @@ public class JobListingControllerTest {
 		@Test
 	    void testCreateJobListingError() {
 			HttpServletResponse response = mock(HttpServletResponse.class);
-			when(jobListingService.isBlank(jobListing.getTitle())).thenReturn(true);
-			when(jobListingService.isBlank(jobListing.getDetails())).thenReturn(true);
-			when(jobListingService.isBlank(jobListing.getRate())).thenReturn(true);
-			when(jobListingService.isBlank(jobListing.getRateType())).thenReturn(true);
-	        when(jobListingService.isId(String.valueOf(jobListing.getAuthorId()))).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getTitle())).thenReturn(true);
+			when(jobListingService.isBlank(jobListingDTO.getDetails())).thenReturn(true);
+			when(jobListingService.isBlank(jobListingDTO.getRate())).thenReturn(true);
+			when(jobListingService.isBlank(jobListingDTO.getRateType())).thenReturn(true);
+	        when(jobListingService.isId(String.valueOf(jobListingDTO.getAuthorId()))).thenReturn(false);
 	        //when(jobListingService.addJobListing(jobListing)).thenReturn(jobListing);
-	        APIResponse res = jobListingController.createJobListing(response, jobListing);
+	        APIResponse res = jobListingController.createJobListing(response, jobListingDTO);
 	        JobListing resListings = (JobListing) res.getData();
-	        verify(jobListingService, Mockito.times(0)).addJobListing(jobListing);
+	        verify(jobListingService, Mockito.times(0)).addJobListing(jobListingDTO);
 
 	        assertEquals(resListings, null);
 	    }
@@ -378,15 +381,15 @@ public class JobListingControllerTest {
 		@Test
 	    void testCreateJobListingNull() throws URISyntaxException {    
 			HttpServletResponse response = mock(HttpServletResponse.class);
-			when(jobListingService.isBlank(jobListing.getTitle())).thenReturn(false);
-			when(jobListingService.isBlank(jobListing.getDetails())).thenReturn(false);
-			when(jobListingService.isBlank(jobListing.getRate())).thenReturn(false);
-			when(jobListingService.isBlank(jobListing.getRateType())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getTitle())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getDetails())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getRate())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getRateType())).thenReturn(false);
 	        when(jobListingService.isId(String.valueOf(jobListing.getAuthorId()))).thenReturn(true);
-	        when(jobListingService.addJobListing(jobListing)).thenReturn(null);
-	        APIResponse res = jobListingController.createJobListing(response, jobListing);
+	        when(jobListingService.addJobListing(jobListingDTO)).thenReturn(null);
+	        APIResponse res = jobListingController.createJobListing(response, jobListingDTO);
 	        JobListing resListings = (JobListing) res.getData();
-	        verify(jobListingService, Mockito.times(1)).addJobListing(jobListing);
+	        verify(jobListingService, Mockito.times(1)).addJobListing(jobListingDTO);
 
 	        //assertEquals(jobListing.getId(), resListings.getId());
 	        assertEquals(resListings, null);
@@ -395,15 +398,15 @@ public class JobListingControllerTest {
 		@Test
 	    void testCreateJobListingThrowException() throws URISyntaxException {    
 			HttpServletResponse response = mock(HttpServletResponse.class);
-			when(jobListingService.isBlank(jobListing.getTitle())).thenReturn(false);
-			when(jobListingService.isBlank(jobListing.getDetails())).thenReturn(false);
-			when(jobListingService.isBlank(jobListing.getRate())).thenReturn(false);
-			when(jobListingService.isBlank(jobListing.getRateType())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getTitle())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getDetails())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getRate())).thenReturn(false);
+			when(jobListingService.isBlank(jobListingDTO.getRateType())).thenReturn(false);
 	        when(jobListingService.isId(String.valueOf(jobListing.getAuthorId()))).thenReturn(true);
-	        when(jobListingService.addJobListing(jobListing)).thenThrow(UnexpectedRollbackException.class);
-	        APIResponse res = jobListingController.createJobListing(response, jobListing);
+	        when(jobListingService.addJobListing(jobListingDTO)).thenThrow(UnexpectedRollbackException.class);
+	        APIResponse res = jobListingController.createJobListing(response, jobListingDTO);
 	        JobListing resListings = (JobListing) res.getData();
-	        verify(jobListingService, Mockito.times(1)).addJobListing(jobListing);
+	        verify(jobListingService, Mockito.times(1)).addJobListing(jobListingDTO);
 
 	        assertNull(resListings);
 	    }
@@ -415,10 +418,10 @@ public class JobListingControllerTest {
 			when(jobListingService.isBlank(jobListing.getRate())).thenReturn(false);
 			when(jobListingService.isBlank(jobListing.getRateType())).thenReturn(false);
 	        when(jobListingService.isId(String.valueOf(jobListing.getAuthorId()))).thenReturn(true);
-	        when(jobListingService.updateJobListing(jobListing)).thenReturn(jobListing);
-	        APIResponse res = jobListingController.updateJobListing(jobListing.getId(), jobListing);
+	        when(jobListingService.updateJobListing(jobListingDTO)).thenReturn(jobListing);
+	        APIResponse res = jobListingController.updateJobListing(jobListingDTO.getId(), jobListingDTO);
 	        JobListing resListings = (JobListing) res.getData();
-	        verify(jobListingService, Mockito.times(1)).updateJobListing(jobListing);
+	        verify(jobListingService, Mockito.times(1)).updateJobListing(jobListingDTO);
 
 	        assertEquals(jobListing.getId(), resListings.getId());
 	    }
@@ -429,9 +432,9 @@ public class JobListingControllerTest {
 			when(jobListingService.isBlank(jobListing.getRate())).thenReturn(true);
 			when(jobListingService.isBlank(jobListing.getRateType())).thenReturn(true);
 	        when(jobListingService.isId(String.valueOf(jobListing.getAuthorId()))).thenReturn(false);
-	        APIResponse res = jobListingController.updateJobListing(jobListing.getId(), jobListing);
+	        APIResponse res = jobListingController.updateJobListing(jobListingDTO.getId(), jobListingDTO);
 	        JobListing resListings = (JobListing) res.getData();
-	        verify(jobListingService, Mockito.times(0)).updateJobListing(jobListing);
+	        verify(jobListingService, Mockito.times(0)).updateJobListing(jobListingDTO);
 
 	        assertEquals(resListings, null);
 	    }
@@ -444,10 +447,10 @@ public class JobListingControllerTest {
 			when(jobListingService.isBlank(jobListing.getRate())).thenReturn(false);
 			when(jobListingService.isBlank(jobListing.getRateType())).thenReturn(false);
 	        when(jobListingService.isId(String.valueOf(jobListing.getAuthorId()))).thenReturn(true);
-	        when(jobListingService.updateJobListing(jobListing)).thenReturn(null);
-	        APIResponse res = jobListingController.updateJobListing(jobListing.getId(), jobListing);
+	        when(jobListingService.updateJobListing(jobListingDTO)).thenReturn(null);
+	        APIResponse res = jobListingController.updateJobListing(jobListingDTO.getId(), jobListingDTO);
 	        JobListing resListings = (JobListing) res.getData();
-	        verify(jobListingService, Mockito.times(1)).updateJobListing(jobListing);
+	        verify(jobListingService, Mockito.times(1)).updateJobListing(jobListingDTO);
 
 	        //assertEquals(jobListing.getId(), resListings.getId());
 	        assertEquals(resListings, null);
@@ -460,10 +463,10 @@ public class JobListingControllerTest {
 			when(jobListingService.isBlank(jobListing.getRate())).thenReturn(false);
 			when(jobListingService.isBlank(jobListing.getRateType())).thenReturn(false);
 	        when(jobListingService.isId(String.valueOf(jobListing.getAuthorId()))).thenReturn(true);
-	        when(jobListingService.updateJobListing(jobListing)).thenThrow(UnexpectedRollbackException.class);
-	        APIResponse res = jobListingController.updateJobListing(jobListing.getId(), jobListing);
+	        when(jobListingService.updateJobListing(jobListingDTO)).thenThrow(UnexpectedRollbackException.class);
+	        APIResponse res = jobListingController.updateJobListing(jobListingDTO.getId(), jobListingDTO);
 	        JobListing resListings = (JobListing) res.getData();
-	        verify(jobListingService, Mockito.times(1)).updateJobListing(jobListing);
+	        verify(jobListingService, Mockito.times(1)).updateJobListing(jobListingDTO);
 
 	        assertNull(resListings);
 	    }

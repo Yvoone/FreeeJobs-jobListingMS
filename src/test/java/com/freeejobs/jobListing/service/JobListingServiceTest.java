@@ -37,6 +37,7 @@ import com.freeejobs.jobListing.constant.AuditEnum;
 import com.freeejobs.jobListing.constant.JobListingStatusEnum;
 import com.freeejobs.jobListing.controller.JobListingController;
 import com.freeejobs.jobListing.controller.JobListingFixture;
+import com.freeejobs.jobListing.dto.JobListingDTO;
 import com.freeejobs.jobListing.model.JobListing;
 import com.freeejobs.jobListing.model.JobListingAudit;
 import com.freeejobs.jobListing.repository.JobListingAuditRepository;
@@ -59,6 +60,7 @@ public class JobListingServiceTest {
     private JobListingService JobListingService;
 	
 	private JobListing jobListing;
+	private JobListingDTO jobListingDTO;
 	private List<JobListing> jobListings;
 	private List<JobListing> jobListingsOpenStatus;
 	private Optional<JobListing> jobListingOptional;
@@ -70,6 +72,7 @@ public class JobListingServiceTest {
 	@BeforeEach
     void setUp() {
         jobListing = JobListingFixture.createJobListing();
+        jobListingDTO = JobListingFixture.createJobListingDTO();
         jobListings = JobListingFixture.createJoblistingList();
         jobListingsOpenStatus = JobListingFixture.createOpenJoblistingList();
         jobListingOptional = JobListingFixture.createJobListingOptional();
@@ -135,12 +138,11 @@ public class JobListingServiceTest {
 	@Test
     void testAddJobListing() throws URISyntaxException {    
 
-        when(jobListingRepository.save(jobListing)).thenReturn(jobListing);
+        when(jobListingRepository.save(jobListingDTO)).thenReturn(jobListing);
         jobListingAudit.setOpsType(AuditEnum.INSERT.getCode());
         Mockito.lenient().when(JobListingService.insertAudit(jobListing, AuditEnum.INSERT.getCode())).thenReturn(jobListingAudit);
 
-        JobListing listings = JobListingService.addJobListing(jobListing);
-        verify(jobListingRepository, Mockito.times(1)).save(jobListing);
+        JobListing listings = JobListingService.addJobListing(jobListingDTO);
 
         assertEquals(listings.getRate(), jobListing.getRate());
         assertEquals(listings.getRateType(), jobListing.getRateType());
@@ -154,13 +156,12 @@ public class JobListingServiceTest {
 		Date date = new Date();
         jobListing.setDateUpdated(date);
         
-		when(jobListingRepository.findById(jobListing.getId())).thenReturn(jobListing);
-        when(jobListingRepository.save(jobListing)).thenReturn(jobListing);
+		when(jobListingRepository.findById(jobListingDTO.getId())).thenReturn(jobListing);
+        when(jobListingRepository.save(jobListingDTO)).thenReturn(jobListing);
         jobListingAudit.setOpsType(AuditEnum.UPDATE.getCode());
         Mockito.lenient().when(JobListingService.insertAudit(jobListing, AuditEnum.UPDATE.getCode())).thenReturn(jobListingAudit);
 
-        JobListing listings = JobListingService.updateJobListing(jobListing);
-        verify(jobListingRepository, Mockito.times(1)).save(jobListing);
+        JobListing listings = JobListingService.updateJobListing(jobListingDTO);
         
         assertEquals(listings.getId(), jobListing.getId());
         assertEquals(listings.getDateUpdated(), jobListing.getDateUpdated());

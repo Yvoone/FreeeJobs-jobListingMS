@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.freeejobs.jobListing.constant.JobListingStatusEnum;
+import com.freeejobs.jobListing.dto.JobListingDTO;
 import com.freeejobs.jobListing.model.JobListing;
 import com.freeejobs.jobListing.model.JobListingAudit;
 import com.freeejobs.jobListing.response.Status;
@@ -15,6 +16,22 @@ public class JobListingFixture {
 	public static JobListing createJobListing() {
 
 		JobListing jobListing = new JobListing();
+        jobListing.setId(Long.valueOf(1));
+        jobListing.setAuthorId(Long.valueOf(1));
+        jobListing.setTitle("Test Title");
+        jobListing.setRate("10");
+        jobListing.setRateType("Per Hour");
+        jobListing.setDetails("Test Details");
+        jobListing.setDateCreated(new Date());
+        jobListing.setDateUpdated(new Date());
+        
+
+        return jobListing;
+    }
+	
+	public static JobListingDTO createJobListingDTO() {
+
+		JobListingDTO jobListing = new JobListingDTO();
         jobListing.setId(Long.valueOf(1));
         jobListing.setAuthorId(Long.valueOf(1));
         jobListing.setTitle("Test Title");

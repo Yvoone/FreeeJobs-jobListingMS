@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.freeejobs.jobListing.constant.JobListingStatusEnum;
+import com.freeejobs.jobListing.dto.JobListingDTO;
 import com.freeejobs.jobListing.model.JobListing;
 import com.freeejobs.jobListing.response.APIResponse;
 import com.freeejobs.jobListing.response.Status;
@@ -140,7 +141,7 @@ public class JobListingController {
 						//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 						//return null;
 						responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing ByAuthorId And Status.");
-						LOGGER.error(status.toString());
+						LOGGER.error("Failed to list JobListing ByAuthorId And Status. No Listing.");
 						
 					} else {
 						//response.setStatus(HttpServletResponse.SC_OK);
@@ -150,7 +151,7 @@ public class JobListingController {
 				responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to list JobListing ByAuthorId And Status. Invalid status or id.");
 				String listOfErrors = errors.stream().map(Object::toString)
                         .collect(Collectors.joining(", "));
-				LOGGER.error(status.toString()+" "+listOfErrors);
+				LOGGER.error(listOfErrors);
 			}
 		} 
 		catch (Exception e) {
@@ -236,7 +237,7 @@ public class JobListingController {
 	}
 	
 	@PostMapping("/create")
-    public APIResponse createJobListing(HttpServletResponse response, @RequestBody JobListing jobListing) {
+    public APIResponse createJobListing(HttpServletResponse response, @RequestBody JobListingDTO jobListing) {
 		//validate fields
 		//handle errors
 		APIResponse resp = new APIResponse();
@@ -295,7 +296,7 @@ public class JobListingController {
     }
 
     @PutMapping("/{id}/edit")
-    public APIResponse updateJobListing(@PathVariable("id") Long id, @RequestBody JobListing jobListing) {
+    public APIResponse updateJobListing(@PathVariable("id") Long id, @RequestBody JobListingDTO jobListing) {
     	JobListing jobListingUpdated = null;
     	APIResponse resp = new APIResponse();
 		Status status = new Status(Status.Type.OK, "Account login success.");
@@ -373,7 +374,7 @@ public class JobListingController {
 					//response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					//return null;
 					responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to update JobListing status.");
-					LOGGER.error(status.toString());
+					LOGGER.error("Failed to update JobListing status.");
 					
 				} else {
 					//response.setStatus(HttpServletResponse.SC_OK);
@@ -383,7 +384,7 @@ public class JobListingController {
 				responseStatus = new Status(Status.Type.INTERNAL_SERVER_ERROR, "Failed to create job listing. Invalid JobListing Object.");
 				String listOfErrors = errors.stream().map(Object::toString)
                         .collect(Collectors.joining(", "));
-				LOGGER.error(status.toString()+" "+listOfErrors);
+				LOGGER.error(listOfErrors);
 			}
 		} catch (Exception e) {
 			System.out.println(e);

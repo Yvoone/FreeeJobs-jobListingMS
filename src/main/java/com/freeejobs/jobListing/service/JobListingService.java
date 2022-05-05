@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.freeejobs.jobListing.constant.AuditEnum;
 import com.freeejobs.jobListing.constant.JobListingStatusEnum;
+import com.freeejobs.jobListing.dto.JobListingDTO;
 import com.freeejobs.jobListing.model.JobListing;
 import com.freeejobs.jobListing.model.JobListingAudit;
 import com.freeejobs.jobListing.repository.JobListingAuditRepository;
@@ -44,7 +45,7 @@ public class JobListingService {
 		return jobListingRepository.getAllOpenActiveJobListingTotal(status, searchValue);
 	}
 
-	public JobListing addJobListing(JobListing jobListing) {
+	public JobListing addJobListing(JobListingDTO jobListing) {
 		jobListing.setDateCreated(new Date());
 		jobListing.setDateUpdated(new Date());
 		jobListing.setStatus(JobListingStatusEnum.OPEN_FOR_APPLICATION.getCode());
@@ -56,13 +57,13 @@ public class JobListingService {
 		
 	}
 
-	public JobListing updateJobListing(JobListing jobListing) {
+	public JobListing updateJobListing(JobListingDTO jobListing) {
 		JobListing oldJobListing = jobListingRepository.findById(jobListing.getId());
 		jobListing.setDateCreated(oldJobListing.getDateCreated());
 		jobListing.setDateUpdated(new Date());
 		jobListing.setStatus(oldJobListing.getStatus());
-		insertAudit(jobListing ,AuditEnum.UPDATE.getCode());
 		JobListing updatedListing = jobListingRepository.save(jobListing);
+		insertAudit(updatedListing ,AuditEnum.UPDATE.getCode());
 		insertAudit(updatedListing, AuditEnum.UPDATE.getCode());
 		
 		return updatedListing;
