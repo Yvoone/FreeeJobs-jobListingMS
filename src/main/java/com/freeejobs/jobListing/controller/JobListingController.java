@@ -32,7 +32,7 @@ import com.freeejobs.jobListing.service.JobListingService;
 
 @RestController
 @RequestMapping(value="/jobListing")
-@CrossOrigin
+@CrossOrigin("https://freeejobs-web.herokuapp.com")
 public class JobListingController {
 	
 	private static Logger LOGGER = LogManager.getLogger(JobListingController.class);
