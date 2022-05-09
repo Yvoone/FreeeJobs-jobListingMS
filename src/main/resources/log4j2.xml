@@ -7,7 +7,7 @@
     	<Log4j2Appender name="errorlogfileS3">
 	      <PatternLayout pattern="%d{HH:mm:ss,SSS} [%t] %-5p %c{36} - %m%n"/>
 	      <verbose>false</verbose>
-	      <stagingBufferAge>5</stagingBufferAge>
+	      <stagingBufferSize>100</stagingBufferSize>
 	      	<s3Bucket>freeejobs-logs</s3Bucket>
 	        <s3Path>freeejobsListing/error/</s3Path>
 	        <s3Region>ap-southeast-1</s3Region>
@@ -17,13 +17,23 @@
 	    <Log4j2Appender name="JPAlogfileS3">
 	      <PatternLayout pattern="%d{HH:mm:ss,SSS} [%t] %-5p %c{36} - %m%n"/>
 	      <verbose>false</verbose>
-	      <stagingBufferAge>5</stagingBufferAge>
+	      <stagingBufferSize>100</stagingBufferSize>
 	      	<s3Bucket>freeejobs-logs</s3Bucket>
 	        <s3Path>freeejobsListing/jpa/</s3Path>
 	        <s3Region>ap-southeast-1</s3Region>
 	      	<s3AwsKey>${env:S3_ACCESS_KEY}</s3AwsKey>
 	      	<s3AwsSecret>${env:S3_SECRET_KEY}</s3AwsSecret>
 
+	    </Log4j2Appender>
+	    <Log4j2Appender name="AlllogfileS3">
+	      <PatternLayout pattern="%d{HH:mm:ss,SSS} [%t] %-5p %c{36} - %m%n"/>
+	      <verbose>false</verbose>
+	      <stagingBufferSize>500</stagingBufferSize>
+	      	<s3Bucket>freeejobs-logs</s3Bucket>
+	        <s3Path>freeejobsListing/debug/</s3Path>
+	        <s3Region>ap-southeast-1</s3Region>
+	      	<s3AwsKey>${env:S3_ACCESS_KEY}</s3AwsKey>
+	      	<s3AwsSecret>${env:S3_SECRET_KEY}</s3AwsSecret>
 	    </Log4j2Appender>
     	<RollingFile name="logfile" filename="${basePath}/freeejobs_joblisting.log" append="true"
             filepattern="%d{YYYYMMddHHmmss}-freeejobs.log">
@@ -78,6 +88,7 @@
     	<Root level="all">
 	    	<AppenderRef ref="stdout" level="all"/>
 	    	<AppenderRef ref="logfile" level="debug"/>
+	    	<AppenderRef ref="AlllogfileS3" level="all"/>
 	    	<AppenderRef ref="errorlogfileS3" level="error"/>
 	    	<AppenderRef ref="errorlogfile" level="error"/>
 	    </Root>
