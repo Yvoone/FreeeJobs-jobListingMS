@@ -7,7 +7,7 @@
     	<Log4j2Appender name="errorlogfileS3">
 	      <PatternLayout pattern="%d{HH:mm:ss,SSS} [%t] %-5p %c{36} - %m%n"/>
 	      <verbose>false</verbose>
-	      <stagingBufferSize>500</stagingBufferSize>
+	      <stagingBufferAge>5</stagingBufferAge>
 	      	<s3Bucket>freeejobs-logs</s3Bucket>
 	        <s3Path>freeejobsListing/error/</s3Path>
 	        <s3Region>ap-southeast-1</s3Region>
@@ -17,7 +17,7 @@
 	    <Log4j2Appender name="JPAlogfileS3">
 	      <PatternLayout pattern="%d{HH:mm:ss,SSS} [%t] %-5p %c{36} - %m%n"/>
 	      <verbose>false</verbose>
-	      <stagingBufferSize>500</stagingBufferSize>
+	      <stagingBufferAge>5</stagingBufferAge>
 	      	<s3Bucket>freeejobs-logs</s3Bucket>
 	        <s3Path>freeejobsListing/jpa/</s3Path>
 	        <s3Region>ap-southeast-1</s3Region>
@@ -62,23 +62,23 @@
     	<logger name="org.springframework.orm.jpa" additivity="false">
 		   <level value="DEBUG"/>
 		   <appender-ref ref="JpaLogFile"/>
-		   <!-- <appender-ref ref="JPAlogfileS3"/> -->
+		   <appender-ref ref="JPAlogfileS3"/>
 		</logger>
 		<logger name="org.springframework.jdbc.datasource" additivity="false">
 		   <level value="DEBUG"/>
 		   <appender-ref ref="JpaLogFile"/>
-		   <!-- <appender-ref ref="JPAlogfileS3"/> -->
+		   <appender-ref ref="JPAlogfileS3"/>
 		</logger>
 		<logger name="org.hibernate.SQL" additivity="false">
 		   <level value="DEBUG"/>
 		   <appender-ref ref="JpaLogFile"/>
-		   <!-- <appender-ref ref="JPAlogfileS3"/> -->
+		   <appender-ref ref="JPAlogfileS3"/>
 		</logger>
 		
     	<Root level="all">
 	    	<AppenderRef ref="stdout" level="all"/>
 	    	<AppenderRef ref="logfile" level="debug"/>
-	    	<!-- <AppenderRef ref="errorlogfileS3" level="error"/> -->
+	    	<AppenderRef ref="errorlogfileS3" level="error"/>
 	    	<AppenderRef ref="errorlogfile" level="error"/>
 	    </Root>
     </Loggers>
