@@ -295,7 +295,7 @@ public class JobListingController {
 //		return null;
     }
 
-    @PutMapping({"/{id}/edit","/android/{id}/edit"})
+    @PutMapping("/{id}/edit")
     public APIResponse updateJobListing(@PathVariable("id") Long id, @RequestBody JobListingDTO jobListing) {
     	JobListing jobListingUpdated = null;
     	APIResponse resp = new APIResponse();
@@ -352,7 +352,7 @@ public class JobListingController {
 		return resp;
     }
     
-    @PutMapping("/{id}/updateJobListingStatus")
+    @PutMapping({"/{id}/updateJobListingStatus", "/android/{id}/updateJobListingStatus"})
     public APIResponse updateJobListingStatus(@PathVariable("id") Long id, @RequestBody String status) {
     	System.out.println(id);
     	System.out.println(status);
