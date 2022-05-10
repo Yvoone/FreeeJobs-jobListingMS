@@ -46,11 +46,17 @@ public class JobListingService {
 	}
 
 	public JobListing addJobListing(JobListingDTO jobListing) {
-		jobListing.setDateCreated(new Date());
-		jobListing.setDateUpdated(new Date());
-		jobListing.setStatus(JobListingStatusEnum.OPEN_FOR_APPLICATION.getCode());
+		JobListing newJobListing = new JobListing();
+		newJobListing.setTitle(jobListing.getTitle());
+		newJobListing.setAuthorId(jobListing.getAuthorId());
+		newJobListing.setDetails(jobListing.getDetails());
+		newJobListing.setRate(jobListing.getRate());
+		newJobListing.setRateType(jobListing.getRateType());
+		newJobListing.setDateCreated(new Date());
+		newJobListing.setDateUpdated(new Date());
+		newJobListing.setStatus(JobListingStatusEnum.OPEN_FOR_APPLICATION.getCode());
 		
-		JobListing addedListing = jobListingRepository.save(jobListing);
+		JobListing addedListing = jobListingRepository.save(newJobListing);
 		insertAudit(addedListing, AuditEnum.INSERT.getCode());
 		
 		return addedListing;
@@ -59,10 +65,12 @@ public class JobListingService {
 
 	public JobListing updateJobListing(JobListingDTO jobListing) {
 		JobListing oldJobListing = jobListingRepository.findById(jobListing.getId());
-		jobListing.setDateCreated(oldJobListing.getDateCreated());
-		jobListing.setDateUpdated(new Date());
-		jobListing.setStatus(oldJobListing.getStatus());
-		JobListing updatedListing = jobListingRepository.save(jobListing);
+		oldJobListing.setTitle(jobListing.getTitle());
+		oldJobListing.setAuthorId(jobListing.getAuthorId());
+		oldJobListing.setDetails(jobListing.getDetails());
+		oldJobListing.setRate(jobListing.getRate());
+		oldJobListing.setRateType(jobListing.getRateType());
+		JobListing updatedListing = jobListingRepository.save(oldJobListing);
 		insertAudit(updatedListing ,AuditEnum.UPDATE.getCode());
 		insertAudit(updatedListing, AuditEnum.UPDATE.getCode());
 		

@@ -22,6 +22,7 @@ public class JobListingFixture {
         jobListing.setRate("10");
         jobListing.setRateType("Per Hour");
         jobListing.setDetails("Test Details");
+        jobListing.setStatus(JobListingStatusEnum.OPEN_FOR_APPLICATION.getCode());
         jobListing.setDateCreated(new Date());
         jobListing.setDateUpdated(new Date());
         
